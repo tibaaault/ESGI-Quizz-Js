@@ -7,6 +7,8 @@ import Question from "../views/Question.vue";
 import Results from "../views/Results.vue";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
+import Dashboard from "../views/Dashboard.vue";
+import Stats from "../views/Stats.vue";
 
 const routes = [
   {
@@ -33,6 +35,7 @@ const routes = [
     path: "/quiz/:quizId/questions",
     name: "Question",
     component: Question,
+    meta: { requiresAuth: true },  
   },
   {
     path: "/results/:quizId",
@@ -50,11 +53,31 @@ const routes = [
     name: "Register",
     component: Register,
   },
+  {
+    path: "/dashboard",
+    name: "Dashboard",
+    component: Dashboard,
+    meta: { requiresAuth: true },  
+  },
+  {
+    path: "/stats",
+    name: "Stats",
+    component: Stats,
+    meta: { requiresAuth: true },
+  }
 ];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAuth && !localStorage.getItem("token")) {
+    next("/login");
+  } else {
+    next();
+  }
 });
 
 export default router;

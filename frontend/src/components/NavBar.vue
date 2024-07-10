@@ -37,14 +37,11 @@
       <!-- Collapsible wrapper -->
 
       <!-- Right elements -->
-      <div class="d-flex align-items-center">
-        <p v-if="!isAuthenticated">
-          <RouterLink to="/login">Se connecter</RouterLink>
-        </p>
-        <p v-if="isAuthenticated">
-          <RouterLink to="/profile">Profile</RouterLink>
-          <button @click="handleLogout">Logout</button>
-        </p>
+      <div class="nav-item" v-if="!isLoggedIn">
+        <RouterLink to="/login" class="btn btn-color">Se connecter</RouterLink>
+      </div>
+      <div class="nav-item" v-if="isLoggedIn">
+        <RouterLink to="/dashboard" class="btn btn-color">Profil</RouterLink>
       </div>
       <!-- Right elements -->
     </div>
@@ -54,24 +51,30 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { useStore } from "@/store";
-import { RouterLink } from "vue-router";
+import { defineComponent, computed } from "vue";
+import { RouterLink, useRouter } from "vue-router";
 
 export default defineComponent({
-  name: "NavBarComponent",
+  name: "NavBar",
   setup() {
-    const store = useStore();
-    const isAuthenticated = store.getters["user/isAuthenticated"]; // Utilisation de getters spécifiques au module 'user'
+    const router = useRouter();
 
-    const handleLogout = () => {
-      store.dispatch("user/logout"); // Dispatch de l'action de logout du module 'user'
-    };
+    const isLoggedIn = computed(() => {
+      const token = localStorage.getItem("token");
+      return !!token; 
+    });
 
     return {
-      isAuthenticated,
-      handleLogout,
+      isLoggedIn,
+
     };
   },
 });
 </script>
+
+<style scoped>
+.btn-color {
+  background-color: #9e8e7f;
+  color: white;
+}
+</style>

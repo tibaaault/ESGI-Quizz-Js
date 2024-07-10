@@ -22,25 +22,37 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { useStore } from "@/store";
-import { RouterLink } from "vue-router";
+import axios from "axios";
+import { RouterLink, useRouter } from "vue-router";
 
 export default defineComponent({
   name: "RegisterForm",
-  components: { RouterLink },
   setup() {
-    const store = useStore();
+    const router = useRouter();
     const username = ref("");
     const password = ref("");
 
     const register = async () => {
       try {
-        await store.dispatch("user/register", {
-          username: username.value,
+        const response = await axios.post("http://localhost:3001/auth/register", {
+          name: username.value,
           password: password.value,
         });
-      } catch (error) {
-        console.error("Registration failed:", error);
+
+        const token = response.data.token;
+
+        if (token) {
+          localStorage.setItem("token", token);
+          console.log("Register successful!");
+          router.push("/dashboard");
+        }
+      } catch (error: any) {
+        if (axios.isAxiosError(error)) {
+          console.error("Request failed with status:", error.response?.status);
+          console.error("Error message:", error.response?.data.message);
+        } else {
+          console.error("Unexpected error:", error.message);
+        }
       }
     };
 

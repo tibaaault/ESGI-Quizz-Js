@@ -1,3 +1,5 @@
+// store/modules/auth.ts
+
 import { Module } from 'vuex';
 
 interface User {
@@ -11,14 +13,28 @@ const authModule: Module<any, any> = {
   actions: {
     async login({ commit }: { commit: any }, credentials: User) {
       try {
-        // Simulated login logic for demonstration
-        console.log(`Logging in with username: ${credentials.username}`);
-        // Normally you would call an API here to perform the login and get a token
-        const token = 'mocked_token';
-        const user = { username: credentials.username }; // Mocked user data
+        // Call API to authenticate user
+        const response = await fetch('auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(credentials),
+        });
 
+        if (!response.ok) {
+          throw new Error('Login failed');
+        }
+
+        const { token, user } = await response.json();
+
+        // Commit user data to Vuex state
+        commit('user/setUser', user, { root: true });
+
+        // Return token and user data
         return { token, user };
       } catch (error) {
+        console.error('Login failed:', error);
         throw new Error(`Login failed: ${error}`);
       }
     },

@@ -3,7 +3,7 @@
     <div class="color">
       <div class="d-flex" style="height: 100px"></div>
       <div class="container">
-        <Register />
+        <RegisterFormComponent />
       </div>
     </div>
   </template>
