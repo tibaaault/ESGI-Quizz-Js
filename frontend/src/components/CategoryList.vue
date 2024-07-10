@@ -21,27 +21,57 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted } from "vue";
-import { mapGetters, mapActions } from "vuex";
-import { useStore } from "@/store";
-import { RouterLink } from "vue-router";
+import axios from "axios";
+import { defineComponent } from "vue";
+import { Category } from "@/store/modules/category";
 
 export default defineComponent({
-  name: "CategoriesComponent",
-  computed: {
-    ...mapGetters("category", ["categories"]),
+  data() {
+    return {
+      categories: [] as Category[],
+    };
   },
   methods: {
-    ...mapActions("category", ["fetchCategories"]),
+    async fetchCategories() {
+      try {
+        const response = await axios.get("http://localhost:3001/categories/categories", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        this.categories = response.data as Category[];
+      } catch (error) {
+        console.log("Error fetching categories", error);
+      }
+    },
   },
-  setup() {
-    const store = useStore();
-    onMounted(() => {
-      store.dispatch("category/fetchCategories");
-    });
-
-    return {
-    };
+  created() {
+    this.fetchCategories();
   },
 });
 </script>
+
+// import { defineComponent, onMounted } from "vue";
+// import { mapGetters, mapActions } from "vuex";
+// import { useStore } from "@/store";
+// import { RouterLink } from "vue-router";
+
+// export default defineComponent({
+//   name: "CategoriesComponent",
+//   computed: {
+//     ...mapGetters("category", ["categories"]),
+//   },
+//   methods: {
+//     ...mapActions("category", ["fetchCategories"]),
+//   },
+//   setup() {
+//     const store = useStore();
+//     onMounted(() => {
+//       store.dispatch("category/fetchCategories");
+//     });
+
+//     return {
+//     };
+//   },
+// });
+

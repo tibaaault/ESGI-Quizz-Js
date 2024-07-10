@@ -1,7 +1,10 @@
 <template>
   <NavBarComponent />
   <div class="color">
-    <QuestionComponent />
+    <div class="d-flex" style="height: 100px"></div>
+    <div class="container">
+      <LoginFormComponent />
+    </div>
   </div>
 </template>
 
@@ -9,14 +12,13 @@
 import { defineComponent } from "vue";
 import { useStore } from "@/store";
 import NavBarComponent from "@/components/NavBar.vue";
-import QuestionComponent from "@/components/Question.vue";
-
+import LoginFormComponent from "@/components/Login.vue";
 
 export default defineComponent({
-  name: "Question",
+  name: "Home",
   components: {
     NavBarComponent,
-    QuestionComponent,
+    LoginFormComponent,
   },
   setup() {
     const store = useStore();
@@ -28,7 +30,7 @@ export default defineComponent({
 
 <style scoped>
 .color {
-  background-color: #E3D4C5;
+  background-color: #e3d4c5;
   height: 100vh;
 }
 </style>

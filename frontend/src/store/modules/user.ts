@@ -1,15 +1,16 @@
-// src/store/modules/user.ts
-import { getUsers, createUser } from '../../services/userService';
+// store/modules/user.ts
+
 import { Commit } from 'vuex';
 
 export interface User {
-  id: number;
+  id?: number;
   name: string;
-  email: string;
+  password: string;
+  role: string;
 }
 
 export interface UserState {
-  user: null | User;
+  user: User | null;
   users: User[];
 }
 
@@ -22,33 +23,18 @@ const mutations = {
   setUser(state: UserState, user: User) {
     state.user = user;
   },
-  setUsers(state: UserState, users: User[]) {
-    state.users = users;
+  clearUser(state: UserState) {
+    state.user = null;
   },
 };
 
 const actions = {
-  async fetchUsers({ commit }: { commit: Commit }) {
-    try {
-      const users = await getUsers();
-      commit('setUsers', users);
-    } catch (error) {
-      console.error('Error fetching users:', error);
-    }
-  },
-  async createUser({ commit, dispatch }: { commit: Commit; dispatch: any }, user: { name: string; password: string; role: string }) {
-    try {
-      await createUser(user);
-      dispatch('fetchUsers');
-    } catch (error) {
-      console.error('Error creating user:', error);
-    }
-  },
+  // Vos actions comme login, logout, etc.
 };
 
 const getters = {
-  user: (state: UserState) => state.user,
-  users: (state: UserState) => state.users,
+  isAuthenticated: (state: UserState) => !!state.user,
+  // Autres getters nécessaires
 };
 
 export default {

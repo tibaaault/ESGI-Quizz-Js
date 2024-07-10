@@ -1,12 +1,11 @@
 <template>
   <div>
-    <NavBarComponent />
     <div class="container">
       <div class="col-xl-10 pt-5 mx-auto">
         <div v-if="currentQuestion">
           <div class="card rounded rounded-6">
             <div
-              class="card-title header-question rounded-top py-3 text-center"
+              class="card-title header-question rounded-top py-2 text-center"
             >
               <p class="lead">
                 <b
@@ -15,11 +14,11 @@
                 >
               </p>
             </div>
-            <div class="card-body py-3">
+            <div class="card-body py-2">
               <h4 class="text-center">{{ currentQuestion.libelle }}</h4>
             </div>
           </div>
-          <div class="d-flex" style="height: 50px"></div>
+          <div class="d-flex" style="height: 20px"></div>
           <div class="row">
             <div
               class="col-xl-6 mx-auto text-center p-5"
@@ -32,7 +31,7 @@
                 @click="selectAnswer(currentQuestion.id, answer.id)"
               >
                 <div class="card-body py-5">
-                  <p class="lead card-text py-5">{{ answer.libelle }}</p>
+                  <p class="lead card-text">{{ answer.libelle }}</p>
                 </div>
               </div>
             </div>
@@ -75,70 +74,92 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, onMounted } from "vue";
-import { useStore } from "@/store";
+import { defineComponent, ref, onMounted, computed } from "vue";
+import axios from "axios";
 import { useRoute, useRouter } from "vue-router";
-import NavBarComponent from "@/components/NavBar.vue";
+import { Question } from "@/store/modules/quiz";
+
 
 export default defineComponent({
-  name: "Question",
-  components: {
-    NavBarComponent,
-  },
   setup() {
-    const store = useStore();
-    const route = useRoute();
     const router = useRouter();
-    const quizId = parseInt(route.params.quizId as string);
+    const route = useRoute();
+    const quizId = ref(Number(route.params.quizId));
+    const questions = ref<Question[]>([]);
+    const currentQuestionIndex = ref(0);
+    const selectedAnswers = ref<Record<number, number>>({});
 
-    onMounted(() => {
-      store.dispatch("quiz/fetchQuestionsResponses", quizId);
-    });
+    
+    const fetchQuestionsAndAnswers = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3001/quizzes/quiz/${quizId.value}/questions`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        questions.value = response.data;
+      } catch (error) {
+        console.error('Error fetching questions:', error);
+      }
+    };
 
-    const quiz = computed(() => store.getters["quiz/quiz"]);
-    const questions = computed(() => store.getters["quiz/questions"]);
-    const currentQuestion = computed(
-      () => store.getters["quiz/currentQuestion"]
-    );
-    const currentQuestionIndex = computed(
-      () => store.state.quiz.currentQuestionIndex
-    );
+    // Log initial quizId value to debug
+  console.log('Initial quizId:', quizId.value);
+
+    const selectAnswer = (questionId: number, answerId: number) => {
+      selectedAnswers.value[questionId] = answerId;
+    };
 
     const isSelectedAnswer = (questionId: number, answerId: number) => {
-      return store.getters["quiz/selectedAnswer"](questionId) === answerId;
+      return selectedAnswers.value[questionId] === answerId;
     };
 
     const nextQuestion = () => {
-      store.commit("quiz/incrementQuestionIndex");
+      if (currentQuestionIndex.value < questions.value.length - 1) {
+        currentQuestionIndex.value++;
+      }
     };
 
     const prevQuestion = () => {
-      store.commit("quiz/decrementQuestionIndex");
-    };
-
-    const selectAnswer = (questionId: number, answerId: number) => {
-      store.commit("quiz/selectAnswer", { questionId, answerId });
+      if (currentQuestionIndex.value > 0) {
+        currentQuestionIndex.value--;
+      }
     };
 
     const submitQuiz = async () => {
-      await store.dispatch("quiz/submitQuiz", quizId);
-      router.push("/results/${store.state.quiz.quiz?.id}");
+      try {
+        await axios.post(`http://localhost:3001//quizzes/quiz/${quizId.value}/submit`, selectedAnswers.value, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        router.push(`/results/${quizId.value}`);
+      } catch (error) {
+        console.log("Error submitting quiz", error);
+      }
     };
 
+    onMounted(() => {
+      fetchQuestionsAndAnswers();
+    });
+
+    const currentQuestion = computed(() => questions.value[currentQuestionIndex.value]);
+
     return {
-      quiz,
+      quizId,
       questions,
-      currentQuestion,
       currentQuestionIndex,
+      currentQuestion,
+      selectAnswer,
       isSelectedAnswer,
       nextQuestion,
       prevQuestion,
-      selectAnswer,
       submitQuiz,
     };
   },
 });
 </script>
+
 
 <style scoped>
 .header-question {

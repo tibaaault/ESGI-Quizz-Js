@@ -15,8 +15,37 @@
     </div>
   </div>
 </template>
-
 <script lang="ts">
+import axios from "axios";
+import { defineComponent } from "vue";
+import { Quiz } from "@/store/modules/quiz";
+
+export default defineComponent({
+  data() {
+    return {
+      quizzes: [] as Quiz[],
+    };
+  },
+  methods: {
+    async fetchQuizzes() {
+      try {
+        const response = await axios.get("http://localhost:3001/quizzes/quizzes", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        this.quizzes = response.data as Quiz[];
+      } catch (error) {
+        console.log("Error fetching categories", error);
+      }
+    },
+  },
+  created() {
+    this.fetchQuizzes();
+  },
+});
+</script>
+<!-- <script lang="ts">
 import { defineComponent, onMounted } from "vue";
 import { mapGetters, mapActions } from "vuex";
 import { useStore } from "@/store";
@@ -38,4 +67,4 @@ export default defineComponent({
     return {};
   },
 });
-</script>
+</script> -->

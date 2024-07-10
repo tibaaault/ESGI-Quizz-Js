@@ -39,6 +39,7 @@
     setup() {
       const store = useStore();
       const route = useRoute();
+      
       const quizId = parseInt(route.params.quizId as number);
   
       onMounted(() => {

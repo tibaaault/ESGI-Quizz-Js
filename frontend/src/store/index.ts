@@ -6,6 +6,7 @@ import category from './modules/category';
 import { UserState } from './modules/user';
 import { QuizState } from './modules/quiz';
 import { CategoryState } from './modules/category';
+import authModule from './modules/auth';
 
 
 export interface RootState {
@@ -18,6 +19,7 @@ export const key: InjectionKey<Store<RootState>> = Symbol();
 
 const store: Store<RootState> = createStore<RootState>({
   modules: {
+    auth : authModule,
     user,
     quiz,
     category,    

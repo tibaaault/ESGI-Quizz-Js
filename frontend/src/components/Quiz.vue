@@ -17,7 +17,7 @@
                     <p class="lead">
                       Le quizz dure environ : {{ quiz.duration }} minutes
                     </p>
-                    <RouterLink :to="'/quiz/' + quiz.id + '/questions'">
+                    <RouterLink :to="`/quiz/${quiz.id}/questions`">
                       <button class="btn btn-lg btn-color">Commencer</button>
                     </RouterLink>
                   </p>
@@ -34,27 +34,35 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, computed } from "vue";
-import { useRoute } from 'vue-router';
-import { useStore } from "@/store";
+import { defineComponent, ref, onMounted } from "vue";
+import axios from "axios";
+import { useRoute } from "vue-router";
 import globe from '@/assets/images/globe.jpg';
+import { Quiz } from "@/store/modules/quiz";
 
 
 export default defineComponent({
-  name: "QuizComponent",
   setup() {
     const route = useRoute();
-    const store = useStore();
-    const quizId = computed(() => Number(route.params.id));
-
-
-    onMounted(() => {
-      store.dispatch('quiz/fetchQuizById', quizId.value);
-    });
-
-    const quiz = computed(() => store.getters['quiz/currentQuiz']);
-
+    const quizId = ref(Number(route.params.id));
+    const quiz = ref< Quiz | null>(null);
     const globeUrl = globe;
+
+  const fetchQuiz = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3001/quizzes/quiz/${quizId.value}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        quiz.value = response.data;
+      } catch (error) {
+        console.log("Error fetching quiz", error);
+      }
+    };
+    onMounted(() => {
+      fetchQuiz();
+    });
 
     return {
       quizId,
