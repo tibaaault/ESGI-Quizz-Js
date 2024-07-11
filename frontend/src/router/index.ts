@@ -38,12 +38,6 @@ const routes = [
     meta: { requiresAuth: true },  
   },
   {
-    path: "/results/:quizId",
-    name: "QuizResults",
-    component: Results,
-    props: true,
-  },
-  {
     path: "/login",
     name: "Login",
     component: Login,
@@ -64,7 +58,14 @@ const routes = [
     name: "Stats",
     component: Stats,
     meta: { requiresAuth: true },
-  }
+  },
+  {
+    path: "/results/:quizId",
+    name: "QuizResults",
+    component: Results,
+    props: true,
+  },
+    
 ];
 
 const router = createRouter({

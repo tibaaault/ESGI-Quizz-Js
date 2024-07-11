@@ -19,7 +19,7 @@
             class="form-control"
             v-model="password"
             id="password"
-            type="text"
+            type="password"
             required
           />
         </div>
@@ -58,7 +58,7 @@ export default defineComponent({
         if (token) {
           localStorage.setItem("token", token);
           console.log("Login successful!");
-          router.push("/dashboard");
+          router.push("/");
         }
       } catch (error: any) {
         if (axios.isAxiosError(error)) {

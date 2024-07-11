@@ -29,7 +29,7 @@
             >
           </li>
           <li class="nav-item">
-            <!-- <RouterLink to="/stats" class="nav-link">Stats</RouterLink> -->
+            <RouterLink to="/stats" class="nav-link">Stats</RouterLink>
           </li>
         </ul>
         <!-- Left links -->

@@ -27,7 +27,12 @@
             >
               <div
                 class="card border border-dark rounded rounded-9"
-             :class="{ 'selected-answer': isSelectedAnswer(currentQuestion.id, answer.id) }"
+                :class="{
+                  'selected-answer': isSelectedAnswer(
+                    currentQuestion.id,
+                    answer.id
+                  ),
+                }"
                 @click="selectAnswer(currentQuestion.id, answer.id)"
               >
                 <div class="card-body py-5">
@@ -79,6 +84,25 @@ import axios from "axios";
 import { useRoute, useRouter } from "vue-router";
 import { Question } from "@/store/modules/quiz";
 
+function shuffleArray(array: any[]) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+// Fonction pour extraire l'ID utilisateur à partir du token JWT
+const getUserIdFromToken = (token: string): number | null => {
+  if (!token) {
+    return null;
+  }
+  const tokenParts = token.split(".");
+  if (tokenParts.length < 2) {
+    return null;
+  }
+  const payload = JSON.parse(atob(tokenParts[1]));
+  return payload.userId ?? null;
+};
 
 export default defineComponent({
   setup() {
@@ -89,22 +113,37 @@ export default defineComponent({
     const currentQuestionIndex = ref(0);
     const selectedAnswers = ref<Record<number, number>>({});
 
-    
     const fetchQuestionsAndAnswers = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/quizzes/quiz/${quizId.value}/questions`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+        const response = await axios.get(
+          `http://localhost:3001/quizzes/quiz/${quizId.value}/questions`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        let fetchedQuestions = response.data.map((question: Question) => {
+          // Shuffle answers for each question
+          const shuffledAnswers = [...question.answers];
+          shuffleArray(shuffledAnswers);
+          return {
+            ...question,
+            answers: shuffledAnswers,
+          };
         });
-        questions.value = response.data;
+
+        // Shuffle the questions themselves
+        shuffleArray(fetchedQuestions);
+
+        questions.value = fetchedQuestions;
       } catch (error) {
-        console.error('Error fetching questions:', error);
+        console.error("Error fetching questions:", error);
       }
     };
 
     // Log initial quizId value to debug
-  console.log('Initial quizId:', quizId.value);
+    console.log("Initial quizId:", quizId.value);
 
     const selectAnswer = (questionId: number, answerId: number) => {
       selectedAnswers.value[questionId] = answerId;
@@ -126,16 +165,55 @@ export default defineComponent({
       }
     };
 
+    const calculateScore = () => {
+      let score = 0;
+      questions.value.forEach((question) => {
+        const selectedAnswerId = selectedAnswers.value[question.id];
+        const correctAnswer = question.answers.find(
+          (answer) => answer.statut === 1
+        );
+        if (correctAnswer && selectedAnswerId === correctAnswer.id) {
+          score++;
+        }
+      });
+      return score;
+    };
+
     const submitQuiz = async () => {
+      const score = calculateScore();
+      const currentDate = new Date();
+      const timeSpent = 0;
       try {
-        await axios.post(`http://localhost:3001//quizzes/quiz/${quizId.value}/submit`, selectedAnswers.value, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        // Récupérer le token JWT depuis localStorage
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("Token not found in localStorage");
+        }
+
+        // Extraire l'ID utilisateur à partir du token JWT
+        const userId = getUserIdFromToken(token);
+
+        // Envoyer la requête POST pour soumettre le quiz
+        await axios.post(
+          `http://localhost:3001/stats/${quizId.value}/submit`,
+          {
+            answers: selectedAnswers.value,
+            result: score,
+            date: currentDate,
+            time: timeSpent,
+            userId: userId, // Utiliser l'ID utilisateur récupéré
+            quizzId: quizId.value,
           },
-        });
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Utiliser le token pour l'authentification
+            },
+          }
+        );
+
         router.push(`/results/${quizId.value}`);
       } catch (error) {
-        console.log("Error submitting quiz", error);
+        console.log("Error submitting quiz and saving result", error);
       }
     };
 
@@ -143,7 +221,9 @@ export default defineComponent({
       fetchQuestionsAndAnswers();
     });
 
-    const currentQuestion = computed(() => questions.value[currentQuestionIndex.value]);
+    const currentQuestion = computed(
+      () => questions.value[currentQuestionIndex.value]
+    );
 
     return {
       quizId,
@@ -160,7 +240,6 @@ export default defineComponent({
 });
 </script>
 
-
 <style scoped>
 .header-question {
   background-color: #9e8e7f;
@@ -168,10 +247,12 @@ export default defineComponent({
 
 .selected-answer {
   background-color: #9e8e7f;
+  color: white;
+  font-weight: bold;
 }
 
 .btn-color {
- background-color: #9e8e7f;
+  background-color: #9e8e7f;
   color: white;
 }
 </style>

@@ -1,5 +1,3 @@
-// store/modules/auth.ts
-
 import { Module } from 'vuex';
 
 interface User {
@@ -28,10 +26,9 @@ const authModule: Module<any, any> = {
 
         const { token, user } = await response.json();
 
-        // Commit user data to Vuex state
+
         commit('user/setUser', user, { root: true });
 
-        // Return token and user data
         return { token, user };
       } catch (error) {
         console.error('Login failed:', error);

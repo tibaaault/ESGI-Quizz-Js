@@ -62,3 +62,26 @@ export async function getStatsByCategory(req: Request, res: Response) {
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
+
+// Route  enregistrer les résultats du quiz
+export async function submitQuizAndSaveResult(req: Request, res: Response) {
+  const { answers, result, date, time, userId, quizzId } = req.body;
+  try {
+   
+    const newResult = await prisma.stats.create({
+      data: {
+        date: new Date(date), 
+        time,
+        result,
+        user: { connect: { id: userId } },
+        quizz: { connect: { id: quizzId } },
+      },
+    });
+
+    res.json(newResult);
+  } catch (error) {
+    console.error("Error submitting quiz and saving result:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+

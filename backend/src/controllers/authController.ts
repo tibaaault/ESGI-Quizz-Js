@@ -69,3 +69,4 @@ export async function registerUser(req: Request, res: Response) {
     return res.status(500).json({ message: 'Registration failed' });
   }
 }
+

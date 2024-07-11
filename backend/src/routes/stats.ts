@@ -1,5 +1,5 @@
 import express, { Router } from 'express';
-import { getStatsByUserId, getStatsQuizByUserId, getStatsByCategory } from '../controllers/statsController';
+import { getStatsByUserId, getStatsQuizByUserId, getStatsByCategory, submitQuizAndSaveResult } from '../controllers/statsController';
 
 
 
@@ -7,9 +7,11 @@ import { getStatsByUserId, getStatsQuizByUserId, getStatsByCategory } from '../c
 const router: Router = express.Router();
 
 router.get('/stats/user/:idUser', getStatsByUserId);
-router.get('/stats/user/:idUser/quiz/:idQuiz', getStatsQuizByUserId);
+router.get('/result/user/:idUser/quiz/:idQuiz', getStatsQuizByUserId);
 router.get('/stats/user/:idUser/category/:idCategory', getStatsByCategory);
 
+
+router.post('/:id/submit', submitQuizAndSaveResult);
 
 
 

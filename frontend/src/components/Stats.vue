@@ -34,6 +34,8 @@
     name: 'Stats',
     setup() {
       const store = useStore();
+
+      
   
       onMounted(() => {
 

@@ -45,26 +45,3 @@ export default defineComponent({
   },
 });
 </script>
-<!-- <script lang="ts">
-import { defineComponent, onMounted } from "vue";
-import { mapGetters, mapActions } from "vuex";
-import { useStore } from "@/store";
-import { RouterLink } from "vue-router";
-
-export default defineComponent({
-  name: "QuizListComponent",
-  computed: {
-    ...mapGetters("quiz", ["quizzes"]),
-  },
-  methods: {
-    ...mapActions("quiz", ["fetchQuizzes"]),
-  },
-  setup() {
-    const store = useStore();
-    onMounted(() => {
-      store.dispatch("quiz/fetchQuizzes");
-    });
-    return {};
-  },
-});
-</script> -->
