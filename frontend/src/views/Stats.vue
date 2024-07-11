@@ -2,7 +2,7 @@
   <NavBarComponent />
   <div class="color">
     <div class="d-flex" style="height: 100px"></div>
-    <div class="container"></div>
+    <StatsComponent />
   </div>
 </template>
 
@@ -29,6 +29,6 @@ export default defineComponent({
 <style scoped>
 .color {
   background-color: #e3d4c5;
-  height: 100vh;
+  min-height: 100vh;
 }
 </style>

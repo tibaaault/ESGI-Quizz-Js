@@ -16,7 +16,7 @@ export interface Question {
 export interface Answer {
   id: number;
   libelle: string;
-  statut: number; // 1 pour la bonne réponse, 0 pour les autres
+  statut: boolean; // 1 pour la bonne réponse, 0 pour les autres
 }
 
 export interface Stats {

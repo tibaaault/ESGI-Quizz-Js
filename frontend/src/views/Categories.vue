@@ -32,7 +32,7 @@ export default defineComponent({
 <style scoped>
 .color {
   background-color: #e3d4c5;
-  height: 100vh;
+  min-height: 100vh;
 }
 h2 {
   font-family: kalam;

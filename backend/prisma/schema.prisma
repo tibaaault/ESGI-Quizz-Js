@@ -12,6 +12,7 @@ model User {
   name     String
   password String
   role     String
+  successRate Float?
   Stats    Stats[]
 }
 

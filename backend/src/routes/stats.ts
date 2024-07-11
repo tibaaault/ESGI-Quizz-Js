@@ -1,5 +1,5 @@
 import express, { Router } from 'express';
-import { getStatsByUserId, getStatsQuizByUserId, getStatsByCategory, submitQuizAndSaveResult } from '../controllers/statsController';
+import { getStatsByUserId, getStatsQuizByUserId, getStatsByCategory, submitQuizAndSaveResult, updateSuccessRate, getStats } from '../controllers/statsController';
 
 
 
@@ -7,8 +7,11 @@ import { getStatsByUserId, getStatsQuizByUserId, getStatsByCategory, submitQuizA
 const router: Router = express.Router();
 
 router.get('/stats/user/:idUser', getStatsByUserId);
-router.get('/result/user/:idUser/quiz/:idQuiz', getStatsQuizByUserId);
+router.get('/result/user/:userId/quiz/:quizId', getStatsQuizByUserId);
 router.get('/stats/user/:idUser/category/:idCategory', getStatsByCategory);
+router.get('/update-success-rate/:userId', updateSuccessRate);
+router.get('/:userId', getStats);
+
 
 
 router.post('/:id/submit', submitQuizAndSaveResult);

@@ -2,14 +2,18 @@
   <NavBarComponent />
   <div class="container-fluid color">
     <div class="col-xl-10 mx-auto">
-      <div class="d-flex" style="height: 50px;"></div>
+      <div class="d-flex" style="height: 50px"></div>
       <h1 class="text-center">Bienvenue sur Quizz Me !</h1>
-      <div class="d-flex" style="height: 100px;"></div>
-      <h2 class="pb-3">Categories</h2>
+      <div class="d-flex" style="height: 100px"></div>
       <!-- Afficher seulement 3 -->
-      <CategoryListComponent :limit="3" />
-      <h2>Quizz</h2>
-      <QuizListComponent :limit="6" />
+      <div class="card p-4 mb-5">
+        <h2 class="pb-3">Categories</h2>
+        <CategoryListComponent :limit="3" class="py-3"/>
+      </div>
+      <div class="card p-4">
+        <h2 class="">Quizz</h2>
+        <QuizListComponent :limit="6" class="py-3" />
+      </div>
     </div>
   </div>
 </template>
@@ -39,8 +43,9 @@ export default defineComponent({
 <style scoped>
 .color {
   background-color: #e3d4c5;
-  height: 100vh;
+  min-height: 100vh;
 }
+
 h2 {
   font-family: kalam;
 }

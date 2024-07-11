@@ -29,9 +29,9 @@
   </script>
   
   <style scoped>
-  .color {
-    background-color: #e3d4c5;
-    height: 100vh;
-  }
+.color {
+  background-color: #e3d4c5;
+  min-height: 100vh;
+}
   </style>
   

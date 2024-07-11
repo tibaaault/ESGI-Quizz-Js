@@ -63,7 +63,7 @@ const routes = [
     path: "/results/:quizId",
     name: "QuizResults",
     component: Results,
-    props: true,
+
   },
     
 ];

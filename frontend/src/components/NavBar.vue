@@ -28,7 +28,7 @@
               >Categories</RouterLink
             >
           </li>
-          <li class="nav-item">
+          <li class="nav-item"  v-if="isLoggedIn">
             <RouterLink to="/stats" class="nav-link">Stats</RouterLink>
           </li>
         </ul>

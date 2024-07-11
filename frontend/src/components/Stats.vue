@@ -1,57 +1,92 @@
 <template>
-    <div>
-      <NavBarComponent />
-      <div class="container">
-        <div class="col-xl-10 pt-5 mx-auto">
-          <div class="card rounded rounded-6">
-            <div class="card-title header-question rounded-top py-3 text-center">
-              <p class="lead"><b>Résultats du Quiz</b></p>
+  <div>
+    <div class="container mt-5">
+      <div class="row">
+        <div class="col-xl-4 mx-auto card">
+          <div class="card-body">
+            <h3 class="card-title text-center">Votre taux de réussite moyen</h3>
+            <div class="text-center">
+              <h2>{{ averageSuccessRate.toFixed(2) }}%</h2>
             </div>
-            <div class="card-body py-3">
-              <div v-if="quizResult">
-                <p><strong>Date:</strong> {{ quizResult.date }}</p>
-                <p><strong>Temps écoulé:</strong> {{ quizResult.time }} minutes</p>
-                <p><strong>Résultat:</strong> {{ quizResult.result }}%</p>
-                <p><strong>Quiz:</strong> {{ quizResult.quizz.title }}</p>
-                <!-- Afficher d'autres détails du résultat si nécessaire -->
-              </div>
-              <div v-else>
-                <p>Chargement des résultats...</p>
-              </div>
+          </div>
+        </div>
+        <div class="col-xl-4 mx-auto card">
+          <div class="card-body">
+            <h3 class="card-title text-center">Nombre de Quiz passés</h3>
+            <div class="text-center">
+              <h2>{{ totalQuizzes }}</h2>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </template>
-  
-  <script lang="ts">
-  import { defineComponent, computed, onMounted } from 'vue';
-  import { useStore } from '@/store';
-  import { useRoute } from 'vue-router';
-  
-  export default defineComponent({
-    name: 'Stats',
-    setup() {
-      const store = useStore();
+  </div>
+</template>
 
-      
-  
-      onMounted(() => {
+<script lang="ts">
+import { defineComponent, ref, computed, onMounted } from "vue";
+import axios from "axios";
+import { useRoute } from "vue-router";
 
-      });
-
-  
-      return {
-
-      };
-    },
-  });
-  </script>
-  
-  <style scoped>
-  .header-question {
-    background-color: #9e8e7f;
+// Fonction pour extraire l'ID utilisateur à partir du token JWT
+const getUserIdFromToken = (token: string): number | null => {
+  if (!token) {
+    return null;
   }
-  </style>
-  
+  const tokenParts = token.split(".");
+  if (tokenParts.length < 2) {
+    return null;
+  }
+  const payload = JSON.parse(atob(tokenParts[1]));
+  return payload.userId ?? null;
+};
+
+export default defineComponent({
+  setup() {
+    const route = useRoute();
+    const averageSuccessRate = ref<number>(0);
+    const totalQuizzes = ref<number>(0);
+    const successRates = ref<number[]>([]);
+
+    const fetchStats = async () => {
+      try {
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("Token not found in localStorage");
+        }
+        const userId = getUserIdFromToken(token);
+
+        const response = await axios.get<any>(
+          `http://localhost:3001/stats/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+
+
+        if (response.data) {
+          averageSuccessRate.value = response.data.successRate;
+          totalQuizzes.value = response.data.totalQuizzes;
+        }
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      }
+    };
+
+    onMounted(() => {
+      fetchStats();
+    });
+
+    return {
+      averageSuccessRate,
+      totalQuizzes,
+    };
+  },
+});
+</script>
+
+<style scoped></style>

@@ -124,7 +124,6 @@ export default defineComponent({
           }
         );
         let fetchedQuestions = response.data.map((question: Question) => {
-          // Shuffle answers for each question
           const shuffledAnswers = [...question.answers];
           shuffleArray(shuffledAnswers);
           return {
@@ -133,6 +132,8 @@ export default defineComponent({
           };
         });
 
+        shuffleArray(fetchedQuestions);
+        questions.value = fetchedQuestions;
         // Shuffle the questions themselves
         shuffleArray(fetchedQuestions);
 
@@ -141,9 +142,6 @@ export default defineComponent({
         console.error("Error fetching questions:", error);
       }
     };
-
-    // Log initial quizId value to debug
-    console.log("Initial quizId:", quizId.value);
 
     const selectAnswer = (questionId: number, answerId: number) => {
       selectedAnswers.value[questionId] = answerId;
@@ -166,18 +164,18 @@ export default defineComponent({
     };
 
     const calculateScore = () => {
-      let score = 0;
-      questions.value.forEach((question) => {
-        const selectedAnswerId = selectedAnswers.value[question.id];
-        const correctAnswer = question.answers.find(
-          (answer) => answer.statut === 1
-        );
-        if (correctAnswer && selectedAnswerId === correctAnswer.id) {
-          score++;
-        }
-      });
-      return score;
-    };
+  let score = 0;
+  questions.value.forEach((question) => {
+    const selectedAnswerId = selectedAnswers.value[question.id];
+    const correctAnswer = question.answers.find(
+      (answer) => answer.statut === true 
+    );
+    if (correctAnswer && selectedAnswerId === correctAnswer.id) {
+      score++;
+    }
+  });
+  return score;
+};
 
     const submitQuiz = async () => {
       const score = calculateScore();
@@ -190,10 +188,8 @@ export default defineComponent({
           throw new Error("Token not found in localStorage");
         }
 
-        // Extraire l'ID utilisateur à partir du token JWT
         const userId = getUserIdFromToken(token);
 
-        // Envoyer la requête POST pour soumettre le quiz
         await axios.post(
           `http://localhost:3001/stats/${quizId.value}/submit`,
           {
@@ -201,7 +197,7 @@ export default defineComponent({
             result: score,
             date: currentDate,
             time: timeSpent,
-            userId: userId, // Utiliser l'ID utilisateur récupéré
+            userId: userId,
             quizzId: quizId.value,
           },
           {

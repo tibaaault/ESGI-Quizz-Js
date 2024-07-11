@@ -3,9 +3,9 @@
     <div class="row">
       <div class="col-xl-4" v-for="quiz in quizzes" :key="quiz.id">
         <RouterLink :to="'/quiz/' + quiz.id">
-          <div class="card">
+          <div class="card color-card">
             <div class="card-body">
-              <h5 class="card-title">
+              <h5 class="card-title text-light">
                 {{ quiz.title + " - " + quiz.duration + " minutes" }}
               </h5>
             </div>
@@ -45,3 +45,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.color-card {
+  background-color: #9e8e7f;
+}
+</style>

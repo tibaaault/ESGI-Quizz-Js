@@ -7,9 +7,9 @@
         :key="category.id"
       >
         <RouterLink :to="'/category/' + category.id">
-          <div class="card shadows shadow-lg">
+          <div class="card shadows shadow-lg color-card">
             <div class="card-body">
-              <h5 class="card-title">
+              <h5 class="card-title text-light">
                 {{ category.libelle }}
               </h5>
             </div>
@@ -51,27 +51,10 @@ export default defineComponent({
 });
 </script>
 
-// import { defineComponent, onMounted } from "vue";
-// import { mapGetters, mapActions } from "vuex";
-// import { useStore } from "@/store";
-// import { RouterLink } from "vue-router";
+<style scoped>
+.color-card {
+  background-color:  #9e8e7f;;
+}
+</style>
 
-// export default defineComponent({
-//   name: "CategoriesComponent",
-//   computed: {
-//     ...mapGetters("category", ["categories"]),
-//   },
-//   methods: {
-//     ...mapActions("category", ["fetchCategories"]),
-//   },
-//   setup() {
-//     const store = useStore();
-//     onMounted(() => {
-//       store.dispatch("category/fetchCategories");
-//     });
-
-//     return {
-//     };
-//   },
-// });
 

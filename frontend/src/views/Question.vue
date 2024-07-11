@@ -28,7 +28,7 @@ export default defineComponent({
 
 <style scoped>
 .color {
-  background-color: #E3D4C5;
-  height: 100vh;
+  background-color: #e3d4c5;
+  min-height: 100vh;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <NavBarComponent />
-  <div class="quiz">
+  <div class="color">
     <QuizComponent />
   </div>
 </template>
@@ -26,8 +26,8 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.quiz {
-  background-color: #E3D4C5;
-  height: 100vh;
+.color {
+  background-color: #e3d4c5;
+  min-height: 100vh;
 }
 </style>
