@@ -38,7 +38,8 @@
 3. Navigate to the backend directory `cd backend/` and run `npm install` to install all dependencies.
 4. Execute `npm run build` to build the frontend assets.
 5. Modify your database connection information in a configuration file (e.g., `.env` for Node.js projects).
-6. Execute migrations with Prisma: npx prisma migrate or use my database esgi-quizz-js.
+6. Launch your MAMP / WAMP / ZAMP (ensure your database server is running).
+7. Execute migrations with Prisma: npx prisma migrate or use my database esgi-quizz-js.
 8. Start your backend server by running `npm run dev`.
 9. Start your frontend server by running `npm run dev`.
 
